@@ -99,7 +99,11 @@ namespace CriptoAPI.Controllers
         public ActionResult Query5()
         {
             // Ejemplo de método en controlador
-            var list = db.Moneda.ToListAsync();
+            var list = db.Moneda.SelectMany(c => c.Contratos, (mo, co) => new{
+                    Moneda = mo.MonedaId,
+                    Contrato = mo.MonedaId + co.CarteraId,
+                    ValorContrato = mo.Actual * co.Cantidad,
+                }).OrderByDescending(x => x.Moneda).ToListAsync();
 
             return Ok(new
             {
@@ -125,7 +129,11 @@ namespace CriptoAPI.Controllers
         public ActionResult Query7()
         {
             // Ejemplo de método en controlador
-            var list = db.Moneda.ToListAsync();
+            var list = db.Moneda.SelectMany(c => c.Contratos, (mo, co) => new{
+                    Moneda = mo.MonedaId,
+                    ValorContrato = mo.Actual * co.Cantidad,
+                    Contratos = mo.Contratos.Count()
+                }).ToListAsync();
 
             return Ok(new
             {
